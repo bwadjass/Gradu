@@ -1,0 +1,1114 @@
+% --- Template for thesis / report with tktltiki2 class ---
+% 
+% last updated 2013/02/15 for tkltiki2 v1.02
+
+\documentclass[english]{tktltiki2}
+
+% tktltiki2 automatically loads babel, so you can simply
+% give the language parameter (e.g. finnish, swedish, english, british) as
+% a parameter for the class: \documentclass[finnish]{tktltiki2}.
+% The information on title and abstract is generated automatically depending on
+% the language, see below if you need to change any of these manually.
+% 
+% Class options:
+% - grading                 -- Print labels for grading information on the front page.
+% - disablelastpagecounter  -- Disables the automatic generation of page number information
+%                              in the abstract. See also \numberofpagesinformation{} command below.
+%
+% The class also respects the following options of article class:
+%   10pt, 11pt, 12pt, final, draft, oneside, twoside,
+%   openright, openany, onecolumn, twocolumn, leqno, fleqn
+%
+% The default font size is 11pt. The paper size used is A4, other sizes are not supported.
+%
+% rubber: module pdftex
+
+% --- General packages ---
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsfonts,amsmath,amssymb,amsthm,booktabs,color,enumitem,graphicx}
+\usepackage[pdftex,hidelinks]{hyperref}
+
+
+
+
+% Automatically set the PDF metadata fields
+\makeatletter
+\AtBeginDocument{\hypersetup{pdftitle = {\@title}, pdfauthor = {\@author}}}
+\makeatother
+
+% --- Language-related settings ---
+%
+% these should be modified according to your language
+
+% babelbib for non-english bibliography using bibtex
+\usepackage[fixlanguage]{babelbib}
+
+% add bibliography to the table of contents
+\usepackage[nottoc]{tocbibind}
+
+% --- Theorem environment definitions ---
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[thm]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+
+% --- tktltiki2 options ---
+%
+% The following commands define the information used to generate title and
+% abstract pages. The following entries should be always specified:
+
+\title{High Availability System}
+\author{Damian Kone}
+\date{\today}
+\level{Master's thesis}
+\abstract{Abstract.}
+
+% The following can be used to specify keywords and classification of the paper:
+
+\keywords{keyword 1, keyword 2, keyword 3}
+
+% classification according to ACM Computing Classification System (http://www.acm.org/about/class/)
+% This is probably mostly relevant for computer scientists
+% uncomment the following; contents of \classification will be printed under the abstract with a title
+% "ACM Computing Classification System (CCS):"
+% \classification{}
+
+% If the automatic page number counting is not working as desired in your case,
+% uncomment the following to manually set the number of pages displayed in the abstract page:
+%
+% \numberofpagesinformation{16 pages + 10 appendix pages}
+%
+% If you are not a computer scientist, you will want to uncomment the following by hand and specify
+% your department, faculty and subject by hand:
+%
+% \faculty{Faculty of Science}
+% \department{Department of Computer Science}
+% \subject{Computer Science}
+%
+% If you are not from the University of Helsinki, then you will most likely want to set these also:
+%
+% \university{University of Helsinki}
+% \universitylong{HELSINGIN YLIOPISTO --- HELSINGFORS UNIVERSITET --- UNIVERSITY OF HELSINKI} % displayed on the top of the abstract page
+% \city{Helsinki}
+%
+
+
+\begin{document}
+
+% --- Front matter ---
+
+\frontmatter      % roman page numbering for front matter
+
+\maketitle        % title page
+\makeabstract     % abstract page
+
+\tableofcontents  % table of contents
+
+% --- Main matter ---
+
+\mainmatter       % clear page, start arabic page numbering
+
+
+
+
+\begin{center} 
+\textbf{ABREVIATIONS, ACRONYMS, AND DEFINITIONS} \cite{Avizienis2004BasicCA, AAMES, article1}
+\end{center}
+\textbf{Availability:} system readiness for correct service for  for authorized actions only.\\ \\*
+\textbf{Behavior:} is what the system does to implement its function
+and is described by a sequence of states, some of which are internal to the
+system while some others are externally visible from other systems over
+the system boundary.\\ \\*
+\textbf{DBMS:} Database Management Systems\\ \\*
+\textbf{Failure:} transition from correct service to incorrect service, it
+occurs when the delivered service deviates from correct service. Correct service is delivered when the service implements the system function.\\
+\\*
+\textbf{Errors:} deviation from the correct service, and can be defined as part of the total state of the system that may lead to its subsequent service failure.\\
+\\*
+\textbf{Error rate:} often expressed as a fraction of all requests received, and system throughput.\\
+\\*
+\textbf{Fault:} a cause of an error is called a fault. Faults can be internal or external of a system. Fault is active when it causes an error, otherwise it is dormant.\\
+\\*
+\textbf{Fault tolerance:} the aim of the fault tolerance [4] is the failure avoidance, which is performed through error detection and system recovery.\\
+\\*
+\textbf{Fault removal:} there are two types of fault removal; during the system development and the system use. Here I’ll consider the fault removal during the system use, which can be corrective or preventive maintenance. Corrective maintenance aims to remove faults that have produced one or more errors and have been reported, while preventive maintenance is aimed at uncovering and removing faults before they might cause errors during normal operation.\\
+\\*
+\textbf{Fault forecasting:} is conducted by evaluating the system behaviour concerning the fault occurrence or activation.\\
+\\*
+\textbf{Function:} is what the system is intended to do and is described
+by the functional specification in terms of functionality and performance.\\
+\\*
+ \textbf{HA:} High Availability\\
+\\*
+\textbf{HA-DBMS:} Hight Available Database Management system\\
+\\*
+\textbf{Management:} real-time sampling with real-time intervention\\
+\\*
+\\*
+\textbf{Measurement:} periodic sampling with periodic intervention\\
+\\*
+\\*
+\textbf{Monitoring:} periodic real-time sampling with periodic intervention\\
+\\*
+\textbf{Request latency:} how long it takes to return a response to a request.\\
+\\*
+\textbf{SA:} Service Availability\\
+\\*
+\textbf{Service:} Service delivered by a system (in its role as a provider) is its behaviour as it is perceived by its user(s); a user is another system that receives a service from the provider.\\
+Defined also as an application delivered over a network; it is the
+substrate of measurement for availability \cite{AAMES}.\\
+\\*
+\textbf{SLA:} Service Level Agreement.\\
+\\*
+\textbf{SLI:} Service Level Indicator.\\
+Service-level indicators, or service level indicator metrics, are the result measures from tests that validate the service \cite{AAMES} .
+\\*
+\textbf{SLO:} Service Level Objective.\\
+\\*
+\textbf{Structure:} is what enables the systrem to generate behaviour. From a structural viewpoint, a system is composed of a set of components bound
+together to interact, where each component is another system\\
+\\*
+\textbf{System:} entity that interacts with other entities, other systems, including hardware, software, humans, and the physical world with its natural phenomena. These other systems are the environment of the given system. The system boundary is the common frontier between the system and its environment.\\
+\pagebreak
+
+
+
+
+
+
+
+
+\section{INTRODUCTION} \label{intro}
+In the early days of computer technology, system performance was important for IT organizations. Because good performance was a common goal, moreover systems did not have to run twenty-four hours a day, seven days a week. Nowadays, much attention given to high availability technologies  because systems are expected to operate continually.\\
+Historically, benchmarking \cite{survey} has been used to proceed with the performance
+testing, whereas only recently the system availability has gained recognition and respect  because  individuals and organizations are developing or procuring sophisticated computing and communication systems for which the high availability is a requisite whether to service a set of cash dispensers, control a satellite constellation, an airplane, or to maintain the confidentiality of a sensitive database. Systems are  expected to operate continually. System downtime cost is unacceptable, beacuse its cost can be enormous. As noted in \cite{AvalDisgest} that a system downtime costs can exceed \$500,000 per hour, stressing the importance of a highly available infrastructure.\\ \\*
+Nowadays, system availability is important in most organizations and the goal of providing minimal downtime to users is receiving significant attention.\\ 
+There are three types of system availability: continuous availability, fault-tolerance, and high availability.\\ 
+Continuous availability implies nonstop service. This mean that system must not have outages and service delivery must be ongoing, without interruptions. This goal is very hard to achieve, as computer components (hardware or software)  are neither error-free nor maintenance-free, only in special application areas like airplane fly-by-wire controllers or nuclear reactor monitoring do we find the need for it;  therefore a system that needs continuous availability has to be fault-tolerant.\\ \\*
+Fault tolerance \cite{1672217, Jalote:1994:FTD:179250} masks the presence of faults in a system from the user by employing redundancy in hardware, software. It is done in hardware components, but rarely for software.\\
+Hardware redundancy consists of adding replicated custom hardware components to the system to mask hardware faults.\\
+Software redundancy includes the management of redundant hardware components and ensuring their correct use in the event of failures in the system.\\ 
+Time redundancy refers to the repetition of the execution of a set of instructions to ensure correct behavior even if a failure occurs.\\
+High availability (HA) \cite{doi:10.1177/109434200101500209} provides an alternative to fault tolerance. It  is essential for any organizations interested in protecting their business against the risk of a system outage, loss of transactional data, incomplete data, or message processing errors.\\ \\*
+For an organization interested in being available at all times, HA clustering is a practical solution, as it allows the application and business process to resume operations quickly despite the failure of a server and ensure business is not interrupted.\\  \\*
+Service availability needs a more enhanced metric in order to measure availability in a way that meets the demands of todays services, as the environment where services are deployed becomes more and more complex \cite{article} a more detailed view on what is availability is needed.
+
+\subsection{Concrete objectives}
+
+In this thesis we focus on  high availability system, and Relex Solutions Oy is used as case study.\\
+\\*
+Define how the availability of the components should be defined and measured.\\
+\\*
+What are the methods and tools will be used?\\
+\\* 
+The intended practical outcome for the company would be to have SLO (Service Level Objective), and SLI (Service Level Indicator) defined as well as a method to do the measurements.
+
+
+
+
+\subsection{Structure and contents}
+
+\subsection{Initial considerations} \label{initial}
+Here I will provide a brief definition of the service unavailability, availability measurement, clustering, load balancing, parallel computing, high availability and scalability.
+
+\begin{flushleft}
+\textbf{Unavailability}
+\end{flushleft}
+Unavailability occurs when the desired services are not available, stressing the importance of Service Availability.  It can occurs on different kinds of services  as mobile communication domain, financial sector , and therefore different consequences as a result. As example in \cite{Yle2008}bout mobile phone users in Finland, who was affected by a widespread disturbance of a mobile telephone service  and had problems receiving their incoming calls and text messages. The interrupt of service, reportedly caused by a data overload in the network, lasted for about seven hours during the day.\\
+Another computer system failure was at the Amazon Web Services \cite{Amaz2011} for providing web hosting services by means of its cloud infrastructure to many web sites. The failure was reportedly caused by an upgrade of network capacity and lasted for almost four days before the last affected consumer data were recovered \cite{BBC2011}. In fact 0.7 of that data could not be recovery at all.\\
+As consequence  Amazon had also paid 10-day service credits to those affected customers.
+It is important to note that all the consequences in the illustrated  examples above are viewed from the end-users’
+perspective.\\
+List of failures and downtime incidents collected by researchers \cite{DowntimeInc2013} gives
+further examples of causes and consequences.
+
+\begin{flushleft}
+\textbf{Availability Measure}
+\end{flushleft}
+Traditionally, the notion of availability has been defined as the probability that a system is up, and the base availability measure is the ratio of uptime to total elapsed time, representing the percentage of time that a system is “up” during its lifetime \cite{1672218}:
+ 
+ \begin{equation}
+ availability =  \dfrac{uptime}{uptime + downtime}
+ \end{equation}                                     
+The downtime includes scheduled as well as unscheduled downtime.\\
+Another way to express the same measure for availability is:\\ by knowing the mean time between failures (MTBF) and the mean time to repair (MTTR). We can express planned or expected availability as:
+\begin{equation} \label{eq:2}
+availability = \dfrac{MTBF}{MTBF + MTTR}
+\end{equation}
+Whereas it is usually much more expensive, sometimes impossible, to increase
+the MTBF by high factors, whereas repair time can be improved by
+better processes, spare parts on site, etc.
+\begin{equation}
+\dfrac{10MTBF}{10MTBF + MTTR} = \dfrac{MTBF}{MTBF + MTTR/10}
+\end{equation}
+This formula also shows clearly how one can influence availability most
+easily: decrease the MTTR. Shortening the repair time to one tenth has
+the same effect as a tenfold increase in the MTBF.\\ \\*
+System availability metric has been applied successfully worldwide for years in the PSTN (public switched telephone network)/Integrated Services Digital Network (ISDN) telephony networks \cite{ProacMgmnt}. Whereas it does not sufficiently measure important aspects of service availability, as illustrated in the following example. A web-based application such as a concert ticket sales service may have 99, 999\% availability, however if it is down for the 5 minutes when concert tickets to a popular artist are put out for online sale while at the same tickets can be purchase via competing distributors, this means a considerable loss of profit for the affected ticket sales web-site even though the service is considered to be highly available along traditional measures \cite{Norv1}. System availability metric  has to be measured from the user’s perspective. \\ \\*
+Each type of system has different availability requirements, depending on their usages. For example, on-board avionic computer systems have entirely different standards than an engineering simulation system, or even a network
+storage system. We could provide an example a traditional RAID
+(redundant array of independent disks) setup on a commodity system. The
+characteristics of that system would be quite distinguishable from that of adedicated NAS (network addressed storage) system \cite{4795877}.\\ \\*
+Further classifications can be made by the level of availability required. For instance, an orbiting satellite’s computer system will have different requirements than that of an email system. An email server may allow for better performance at the sacrifice of availability due to a low reaction time of operators. However, sending an operator to fix the system on a satellite is very costly, therefore uptime is of utmost importance.\\ \\*
+Nowadays there is the tendency to assert that all systems must be online and usable all the time. Whereas we must  understand which behaviors really matter to any service and how to measure and evaluate those behaviors in order to manage that service correctly by defining and delivering a given level of service to our users, SLA, SLI, SLO \cite{SRE} are the means to specify requirements for the delivery of IT services.\\ \\* 
+SLIs define quantitative measure of some aspect of the level of service provided, include error rate, request latency and availability  are considered as  SLIs important elements.\\
+SLO is a target value or range of values for a service level that is measured by an SLI. A natural structure for SLO is thus:
+\begin{equation}
+SLI <= target
+\end{equation}
+SLA is a contract between an organization with its customers that includes consequences of meeting (or missing) the SLO they contain.
+
+\begin{flushleft}
+\textbf{Clustering}
+\end{flushleft}
+Computing clustering is a set of connected computers that work together to produce a coordinate output to an specific problem , so that in that  regard they can be viewed as a single system \cite{20190}.\\ 
+Clusters are usually deployed to improve performance, and availability over that of a single computer, while typically being much more cost-effective than single computers of comparable speed or availability \cite{20191}.
+From this perspective, clusters can be classified into high availability clusters and load balancing clusters.\\
+Computers in a cluster are commonly, but not always, interconnected
+through fast local-area networks. According to how the computers are interconnected, clusters can be classified into the categories of tight coupling, loose coupling, and close coupling.\\
+Without clustering, a server running a particular application as when that particular server crashes, the application will be unavailable until the crashed server is fixed. 
+
+\begin{flushleft}
+\textbf{Load Balancing}
+\end{flushleft}
+Load balancing aims to optimize resource use, maximize throughput, minimize response time, and avoid overload of any one of the resources \cite{20192}. It is a computer networking method for distributing workloads across multiple computing resources, such as computers, a computer cluster, network links, central processing units or disk drives \cite{20193}.  Using multiple components with load balancing instead of a single component may increase reliability through redundancy. Load balancing is usually provided by dedicated software or hardware, such as a multilayer switch or a Domain Name System server process. 
+\begin{flushleft}
+\textbf{Parallel Computing}
+\end{flushleft}
+The idea behind of the parallel computing approach is to make a large number of machines act as a single very powerful machine. The way of achieving this is by splitting the work in smaller slices so the computational time is also divided \cite{Joubert2007ParallelC}. This type of cluster is specially valid for large and complex problems that require a high computational power.\\
+Differences between Parallel Computing(denoted here by A) and Load Balancing(denoted by B) groups are quite clear. While nodes in a B group are not aware of the other members of the cluster and act as if the requests would have been addressed to them directly from the client, nodes members of an A group have to tightly collaborate with each other to produce an overall result of all the cluster. Moreover, while the data processed by an A group node lacks of an stand-alone sense, useless without others members results, data computed by a B group machine can be directly returned to the user as is has a full intrinsic sense.
+\begin{flushleft}
+\textbf{High Availability}
+\end{flushleft}
+“High availability is the characteristic of a system to protect against or recover from minor outages in a short time frame with largely automated means.” \cite{20194}.  The failures that cause minor outages could be in the systems, or in the environment, or are the result of human errors.
+High availability is achieved mainly by redundancy of components, we need to differentiate generic high availability from continuous availability which implies nonstop, uninterrupted service. In continuous availability the components of a system are protected against failure, and no after-
+failure recovery take place. In reality, continuous availability is needed very, very seldom and is implemented even more rarely.
+\begin{flushleft}
+\textbf{High scalability}
+\end{flushleft}
+A high scalable system is the one who has been conceived to adapt at any time and with the minimum cost to a set of necessities that can be changing.\\ We could provide as an example a cluster providing web services based on a load balancing technique should, in addition, supply high availability supporting the failure of one of the servers and high scalability though the addition of more servers to the computer cluster.
+\pagebreak
+
+\section{HIGHLY AVAILABLE DATABASES}
+
+Highly Available (HA) Databases  can meet the ’five nines’ (99.999\%) availability requirement which mean five minutes downtime per year \cite{AAMES}. Moreover Highly Available Database Management Systems (HA-DBMS) \cite{inproceedings} are using to achieve databases high availability using process and data redundancy. 
+
+\subsection{HA database redundancy models}
+HA-DBMSs rely on having redundant database processes. Which mean that when a database process fails to provide the correct service, another database process can take over service in few seconds. To provide correctness, each redundant process must see the same set of updates to the database.\\
+We rely on replication and shared disk system to ensure that all the redundant database processes see the same set of updates to the database.
+Replication, relies on the database processes to explicitly transfer updates among each other and in shared disk system  \cite{Norman:1996:MAS:234889.234892} all the processes can access the same set of disks, thus no need to replicate updates.
+\begin{flushleft}
+\textbf{Process Redundancy}
+\end{flushleft}
+Process redundancy in an HA-DBMS allows the DBMS to continue operation in the presence of process failures \cite{inproceedings}. For instance, a process in the active state is currently providing database service. Another process which is in the standby state is not currently providing service but prepared to take over the active state in a rapid manner, if the current active service becomes faulty. This is called a failover. In some cases, a spare process may be used.
+
+\begin{flushleft}
+\textbf{Data Redundancy}
+\end{flushleft}
+The lost of the data can make the DBS unavailable, thus the importance of data redundancy. Moreover, data redundancy can be provided at either the physical or the logical level.\\
+Physical data redundancy refers to relying on software and/or hardware below the database to maintain multiple physical copies of the data. Disk mirroring, RAID, remote disk mirroring, and replicated file systems are some examples of physical data redundancy. 
+These technologies maintain a separate physical copy of the data at a possibly different places, and when the primary copy of the data is lost, the database processes use another copy of the data from those locations.\\
+Logical data redundancy refers to the situation where the database explicitly maintains multiple copies of the data. We should note that the replication in general is based on the assumption that both database servers are from the same vendor. Replication can be inter-database replication, where for instance transactions applied to a primary database A are
+replicated to a secondary database A’ which is more or less up-to-date depending on the synchrony of the replication protocol in the HA Database. In addition to inter-database replication, intra-database replication is used in distributed database systems to achieve high availability using just one database.\\
+The replication can be synchronous or asynchronous, and the method chosen depends on the database product and the required level of safeness \cite{Gray:1992:TPC:573304}. For example with a 1-safe replication (“asynchronous replication”) transactions are replicated after they have been committed on the primary, While a 2-safe replication (“synchronous replication”) the transactions are replicated to the secondary, but not yet committed, before acknowledging commit on the primary.\\
+For instance Oracle Data Guard \cite{Oracle} supports both synchronous and asynchronous log shipping along with use selectable safeness level ranging from 1-safe to very-safe
+
+\pagebreak
+
+
+\section{DATA REDUNDANCY MODELS}
+
+To achieve high availability of data, replication of database fragments is used to allow storage and access of data in more than one node.\\ 
+Database fragmentation is defined as a decomposition of a database A into fragments $A_1, ..., A_n$ that must fulfill the following requirements:\\
+ - \textbf{completeness:} any data existing in the database must be found in some
+fragment.\\
+ - \textbf{reconstruction:} it should be possible to reconstruct the complete database from the fragments.\\
+ - \textbf{disjointness:} any data found in one fragment must not exist in any other
+fragment.\\
+In a fully replicated database the database exists in its entirety in each database process, whereas in a partially replicated database the database fragments are distributed to database processes in such a way that copies of a fragment (replicas), may reside in multiple database processes.\\
+In data replication, fragments can be classified as being primary replicas (Primaries) or secondary replicas (Secondaries). The primary replicas represent the actual data fragment and can be read as well as updated. The secondary replicas are at most read-only and are more or less up to date with the primary replica. Secondary replicas can be promoted to primary replicas during a failover.\\
+Here there are some example of data redundancy models among primaries and secondaries replicas.\\
+
+\begin{flushleft}
+\textbf{1*Primary/1*Secondary}
+\end{flushleft}
+Here every fragment has exactly one primary replica which is replicated to exactly one secondary replica. In this model there are two replicas for achieving high-availability.
+
+\begin{flushleft}
+\textbf{1*Primary/Y*Secondary}
+\end{flushleft}
+In this model every fragment has exactly one primary replica and is replicated to a number of secondary replicas. It provides higher availability than 1*Primary/1*Secondary and allow for higher read accessibility if secondary replicas are allowed to be read.
+
+\begin{flushleft}
+\textbf{1*Primary}
+\end{flushleft}
+Here every fragment exists in exactly one primary replica. This model does not provide any redundancy at the database level. Redundancy is provided below the database by the underlying storage, moreover It is used in shared disk systems and also in centralized or partitioned databases.
+
+\begin{flushleft}
+\textbf{X*Primary}
+\end{flushleft}
+Here every fragment has a number of primary replicas and is used in N*Active process redundancy models (sometimes called multi-master). This model allow for higher read and update accessibility than 1*Primary if the same fragment is not attempted to be updated in parallel (since this would lead to update conflicts).\\ \\*
+The replicated database can be partitioned, non-partitioned. Partitioned database can also have mixed partitions with both Primaries and Secondaries.
+Here some examples of relationships between databases and fragments.
+\begin{flushleft}
+\textbf{Partitioned Replicated Database}
+\end{flushleft}
+Here fragments are allocated or replicated to different nodes (Fig. \ref{fig:N9}).
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS9.png} 
+\caption{Partitioned database \cite{inproceedings}}
+\label{fig:N9}
+\end{figure}
+
+\begin{flushleft}
+\textbf{Non-partitioned Replicated Database}
+\end{flushleft}
+Here the database and the fragment are the same, which mean that the whole database is replicated to the Secondary location (Fig. \ref{fig:N10}) as illustrated in the 1*Primary/1*Secondary.
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS10.png} 
+\caption{Non-partitioned database \cite{inproceedings}}
+\label{fig:N10}
+\end{figure}
+
+\begin{flushleft}
+\textbf{Mixed Replicated Fragments}
+\end{flushleft}
+Here the database host both Primaries and Secondaries, and in this case we have two databases with symmetric fragments (Fig. \ref{fig:N11}).
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS11.png} 
+\caption{Two databases with symmetric fragments \cite{inproceedings}}
+\label{fig:N11}
+\end{figure}
+
+ \pagebreak
+\section{PROCESS REDUNDANCY MODELS}
+Most process redundancy models can be implemented by both shared-disk and replication-based technologies. Here I'll provide some examples of process redundancy models.
+\begin{flushleft}
+\textbf{Active/Standby}
+\end{flushleft}
+Active/Standby is a process redundancy model for HA-DBMS that is supported by both replication and shared-disk systems. Each active
+database process is backed up by a standby database process on another node.
+In (Fig. \ref{N}), a replication-based example is shown while (Fig. \ref{fig:N1}) provides a shared-disk
+based example. All updates must occur on the active database process; they will be
+propagated via replication, or via a shared disk, to the standby database process.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/fig6.png} 
+\caption{Active/Standby Redundancy Model using Replication \cite{inproceedings}}
+\label{N} 
+\end{figure}
+%\\
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/fig7.png}  
+\caption{Active/Standby Redundancy Model using Shared Disk \cite{inproceedings}}
+\label{fig:N1}
+\end{figure}
+
+
+\pagebreak
+
+In the case of a failure of the active database process (for any reason such as software fault in the database server or hardware fault in the hosting node) the standby database process will take over and become the new active database process (Fig. \ref{fig:N2}). If the failed database process recovers it will now become the new standby database process and the database processes have completely switched roles (Fig. \ref{fig:N3}). If the HA Database has a preferred active database process it can later switch back to the original configuration.\\
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/fig8.png} 
+\caption{Failure of Active Primary, Switchover \cite{inproceedings}}
+\label{fig:N2}
+\end{figure}
+
+ 
+\pagebreak
+The standby database process can be defined as more or less ready to take over depending on the chosen safeness level and the HA requirements of the applications. 
+
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/fig9.png} 
+\caption{Reversed Roles \cite{inproceedings}}
+\label{fig:N3}
+\end{figure}
+%\pagebreak
+To classify the non-active database processes we separate between hot standby and warm standby.\\
+
+\begin{flushleft}
+\textbf{Hot Standby}
+\end{flushleft}
+One active database process is being backed up by a standby database process that is ready to more or less instantly (in sub-second time) take over in case the active database process fails. The applications can already be connected to the standby or be reconnected to the standby (now active).
+
+\begin{flushleft}
+\textbf{Warm Standby}
+\end{flushleft}
+One active database process is being backed up by a standby database process that is ready to take over after some synchronization/reconnect with applications in case the active database process fails. In this case, the failover may last from few tens of seconds to few minutes.\\
+
+There are some commercial implementations of Active/Standby HA database systems. For example Oracle Data Guard \cite{Oracle} which lso supports both synchronous and asynchronous replication and MySQL replication \cite{MySQL2}, the active primary database ships transactions to one or more standby databases. These standby databases apply the transactions to their own copies of the data. Should the primary database fail, one of these standby databases can be activated to become the new primary database.
+
+\begin{flushleft}
+\textbf{Spares}
+\end{flushleft}
+Spares are used as failover mechanism to provide reliability, here we'll distinguish between standbys and spares since it is possible to have the models Active/Standby and Actice/Spare.
+
+\begin{flushleft}
+\textbf{Active/S*Spare (one Active and S Spares)}
+\end{flushleft}
+In this configuration several spare database processes are pre-configured on some node(s) and it is supported both by shared disk systems and replicating systems. An example of a shared-disk based architecture with a spare process is shown below (Fig. \ref{fig:N4} )
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS.png} 
+\caption{Active/S*Spare Redundancy Model using Shared Disk \cite{inproceedings}}
+\label{fig:N4}
+\end{figure}
+
+\pagebreak
+In a shared-disk database, if the active database process fails, the shared disk containing the database files is mounted on the node hosting the Spare (a spare node), the Spare becomes initialized with the database, and the database becomes active on that node. If the failed node restarts it will now become a new spare node. The nodes have therefore completely switched roles. 
+If the HA Database has a preferred active database process it can later switch back to the original configuration.
+In a replicating HA-DBMS, the Spare gets the database before becoming Active.\\
+The level of availability offered by this model is lower that that of Active/Standby because of the additional time needed to initialize the Spare.\\
+This kind of operation represents the model that is supported by IBM HACMP \cite{IBM}.
+
+\begin{flushleft}
+\textbf{N*Active}
+\end{flushleft}
+In some larger clusters, the database system can uses more than two nodes to better use the available processing power, memory, local disks, and other resources of the nodes, to balance the work load.\\
+In this process redundancy model, N database processes are
+active and applications can run transactions on either process, all processes support each other in case of a failure and each can take over.
+All committed changes to one database process are available to the others and vice versa.\\
+In shared-disk systems, all the database processes see the same set of changes but in a replication-based system, all changes are replicated to all the processes.
+The database is fully available through all database processes and all records can be updated in all processes. In case of simultaneous conflicting updates, copy consistency may be endangered, in a replicating system. This is taken care of with a distributed concurrency control system, for example lock manager. In a shared disk system, the database infrastructure may be simpler because the data are not replicated.
+(Fig. \ref{fig:N5}) shows a shared disk based N*Active model.
+Here there are two nodes as an example even though the model supports more.
+nodes, and  (Fig. \ref{fig:N6}) shows a replication-based 2-node N*Active model.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/FigS1.png} 
+\caption{N*Active, Shared Disk \cite{inproceedings}}
+\label{fig:N5}
+\end{figure}
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/FigS2.png} 
+\caption{N*Active, Full Replication, Redundancy Model \cite{inproceedings}}
+\label{fig:N6}
+\end{figure}
+
+\pagebreak
+Here are some examples of N*Active HA database systems commercial implementations.
+The Oracle Real Application Clusters \cite{RACOra} is an example of an N*Active configuration whereby all the instances of the database service are active against a single logical copy of the database. This database is typically maintained in a storage-area-network (SAN) attached storage.\\
+MySQL Cluster \cite{MySQL}\cite{MySQL1} has an N*Active configuration in which the processes are partitioned into groups. Each operation of a transaction is synchronously replicated and committed on all processes of a group before the transaction is committed. MySQL Cluster provides a 2-safe committed replication if the group size is set to two.\\
+It is important to note that the process model is always N*Active, if the database is not fully replicated and there are mixed fragments in all databases. For example, in (Fig. \ref{fig:N7}), a 2*Active HA-DBMS is shown utilizing symmetric replication. With symmetric replication, concurrency control problems are avoided and the advantage of load balancing is retained.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS3.png} 
+\caption{A 2*Active symmetric replication database system \cite{inproceedings}}
+\label{fig:N7}
+\end{figure}
+
+\pagebreak
+Unlike most N*Active environments, in (Fig. \ref{fig:N7}), the partitioning scheme is visible to the application and is often based on partitioning the primary key ranges. The applications are responsible for accessing the correct active process. Inter-partition transactions are normally not supported.
+
+\begin{flushleft}
+\textbf{N*Active/S*Spare (N times Active and S times Spare)}
+\end{flushleft}
+In this configuration N Active database processes provide availability to a partitioned database. As in the N*Active model, the active processes may rely on a shared disk, may use fully replicated databases or mixed fragments (partially replicated databases).
+An example of a partially (symmetrically) replicated database with Spares is
+shown in (Fig. \ref{fig:N8}).
+Each database process maintains some fragments of the database and Spare processes can take over in case of failure of active database processes. A Spare must get the relevant fragments of the active database process at startup.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/figS8.png} 
+\caption{N*Active/S*Spare Redundancy Model, Partially Replicated Database \cite{inproceedings}}
+\label{fig:N8}
+\end{figure}
+
+\pagebreak
+\begin{flushleft}
+\textbf{Other Redundancy Models}
+\end{flushleft}
+M-standby, cascading standby and geographically replicated N*active clusters  \cite{MAA} are some examples of systems which combine multiple redundancy models to achieve different degrees of  data and process redundancy.\\
+For instance Oracle MAA (Maximum Availability Architecture) \cite{MAA} is a collection of such a kind of HA architectures and operational practice. The key technologies in Oracle MAA are RAC and Data Guard, which provide protection against node failure and site failure respectively. For example, (Fig. \ref{fig:N12}) represents a configuration of the Oracle MAA:
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/MMA.png} 
+\caption{Oracle Maximum Availability Architecture \cite{MAA}}
+\label{fig:N12}
+\end{figure}
+
+
+\pagebreak
+
+This architecture involves two sites: the primary and secondary. The primary site
+contains multiple application servers and a production database using Oracle Real Application Clusters (RAC) to protect from host and instance failures. The secondary site has an identical configuration. The database at the secondary site is kept synchronized with the primary database by Oracle Data Guard. Clients are initially connected to the primary site. If the primary site fails, Data Guard fails over the production role to the standby database, and the clients can be directed to this new primary database at the secondary site, thereby keeping the service available.
+
+
+\pagebreak
+
+\section{HIGH-AVAILABILITY CLUSTER AND LOAD BALANCING CLUSTER}
+
+\subsection{High-Availability Cluster}
+High-availability cluster is also called “fail-over” cluster. In the simplest case, fail-over means there is a production server (also called primary) and a backup server in the
+cluster. The backup has normally the same configuration as the primary, so that, if the
+primary fails, the backup can take over its processing with little or no impact to users or
+applications. Before the primary fails, the backup server can be already running and in
+sync with the primary so that it is able to take over very quickly, e.g. in sub-second
+time. This is called a hot standby. In some configurations, the standby is to be initial-
+ized before it can take over the workload. For example, the client connections need to
+be rebuilt or crash recovery needs to be done by the standby DBMS instance, etc. This
+is called a warm standby. In an HA cluster, the backup is idle most of the time, i.e. it
+doesn’t take any workload until the primary fails. This is because, if the standby is also
+processing workloads, it may not have enough resources available to take over the
+workload of the primary.
+HA clusters provide effective protection against unplanned downtime, because
+fail-over happens automatically and fast. An HA cluster can also be used to reduce
+planned downtime, e.g. an upgrade of the operating system. In this case, the primary is
+taken offline manually by administrator and the backup is assigned the primary role, so
+that the services provided by the old primary are continued by the new primary while
+the old primary is being upgraded. This is called a “switch-over”.
+
+\subsection{Load Balancing Cluster}
+
+\subsection{Private Network}
+
+\subsection{Single System Image}
+
+\section{HA IN DBS PRODUCTS}
+
+There are many commercial incarnations of HA database systems from major DBMS vendors such as IBM, Oracle and Microsoft.
+Numerous HA technologies and featuressuch as active/standby are supported by commercial products like Oracle Data Guard \cite{Oracle}, MySQL replication \cite{MySQL2}, the Carrier Grade Option of the Solid Database Engine \cite{AHUG} also uses an active-standby pair with a fully replicated database and dynamically controlled safeness level.\\
+In the following sections, we will in turn look at theses causes of downtime and how they are addressed by the commercial DBS products today. 
+
+
+
+\subsection{Unplanned Downtime}
+
+\subsection{Planned Downtime}
+\pagebreak
+
+\section{APPROACH TO AVAILABILITY MEASUREMENT}
+Nowadays computer systems are more distributed and networked, end-users want to access the systems all the time, and also control the measures of system availability since it affects their work immediately and directly. Users regard the contribution of IT infrastructure in terms of the value that it delivers. Application Availability is much  sought after as a requirement for applications delivered over networks. It's often difficult to establish concrete measures that meet user requirement because getting  data about availability is often as complicated as making decisions and acting based on that data’ information. SLA is a contract  between IT management and end-users to seek a common currency to define their shared objectives, without creating undue operational dependence between their domains. That common currency is availability measurement.\\
+Application Availability Measurement (AAMe)  represent the system  from the end user perspective by establishing and maintaining the value of an application to its users \cite{AAMES}.
+The AAMe methods which will be used here is for IT infrastructure and line of business executives looking for a way to identify meaningful indicators of application availability. It presents a generalized model for creating measures of application availability in user terms, and validating the application's user value. Moreover the measurement approach is intended to be architecture independent.\\
+As mentioned in subsection \ref{initial} availability is represented as a fraction of total time that a service needs to be up. Many authors \cite{AAMES}, \cite{article1}, \cite{1672218}, \cite{AvalDisgest} have qualified the  availability as the relationship of failure recovery time (also known as MTTR, mean time to recovery) to the interval between interruptions (MTBF or MTBI, mean time between failures or interruptions).\\
+High availability refers to a system or component that is operational without interruption for long periods of time, with a 100\% percent system indicating a service that experiences zero downtime. This would be a system that never fails, which is pretty rare with complex systems. Most services fall somewhere between 99\% and 100\% up time.  For instance  Amazon, Google, and Microsoft’s set their cloud SLAs at 99.9\% which is  as very reliable uptime. A step above, 99.99\%, or “four nines,” as is considered excellent up time, and uptime can be represented as "nines", as in the fig: \ref{fig:AA} below.\\
+
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/tableofoutage.png} 
+\caption{Table of fractional outages \cite{AAMES}}
+\label{fig:AA} 
+\end{figure}
+
+\pagebreak
+Four nines uptime is still 53 minutes of downtime per year, 1 minute per week. Consider how many people rely on web tools to run their lives and businesses. A lot can go wrong in 52 minutes.\\
+It is easy to understand that getting past 1 minute of downtime per week can be quite an expensive proposition. So what is it that makes four nines so hard? What are the best practices for high availability engineering? And why is 100\% uptime so difficult?\\
+For instance, we still use stairs today that were constructed many of years ago, they have  excellent up time and rarely been unavailable. Imagine an escalator solving the same problem as the stairs (getting people up and down) with some great added features and benefits.\\
+It is apparent what product will have stronger up time. The escalator will need to come offline for regular repair and maintenance. Sometimes it will just plain break down. Eventually, the whole system will need to be replaced. The best escalator engineers in the world can’t build an escalator with the same up time as stairs.\\
+Building for high availability comes down to a series of tradeoffs and sacrifices. For instance, redundant systems that eliminate single point of failures and complex software that can handle the redundancy. Chasing 100\% up time could be very expensive for an organization, because the skills to deal with the complexity and the system's inability to handle change easily drive up the cost.
+It good to note that most downtime is an issue of human error, people pushing bad code, rather than faulty architecture. 
+“Some IT operations executives are fond of saying that the best way to improve availability is to lock the datacenter door.”\\
+It’s good to careful analysis and choose user downtime targets before setting high availability goal rather than simple formulations of up time.
+
+
+
+\subsection{Availability measurement utility from user perspective}
+Availability is an attribute of dependability \cite{Avizienis2004BasicCA}
+see definitions before section \ref{intro}. The figure below show the dependability and security tree.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/Dependability.png} 
+\caption{The dependability and security tree \cite{Avizienis2004BasicCA}}
+\label{fig:DS} 
+\end{figure}
+
+Availability can also be defined as a "continuous application access with predictable performance" \cite{AAMES}. This is intuitive in our daily life, for instance by contacting a travel agency, from the customer' perspective the only value of the system is whether the ticket can be booked or not, or how long it takes. He is not concerned about the status of the server, network nor about the payement card data validation.
+The service level indicator that indicates whether that value was proceeded is measured at the end user's end.\\
+It is difficult to provide perfect information about the
+system's availability, and measures must be selected in the way that their impact on the system is tolerable.
+As Heisenberg showed that “measurement distorts the measured event or element, making AAMe inherently an imperfect indicator” \cite{AAMES}.
+
+\subsection{An approach for choosing what to measure} \label{APPROACH}
+A service is an application delivered over a network. A correct service is delivered when the observed behavior matches those of the corresponding function as described in the specification. A service failure is said to have occurred when the observed behavior deviates from those of the corresponding function as stated in the specification, resulting in the system delivering an incorrect service. The duration of a system delivering an incorrect service is known as a service outage.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/Services.png} 
+\caption{Service state transitions \cite{article1}}
+\label{fig:SS} 
+\end{figure}
+
+A service delivery over a network can be decomposed into subsidiary services.  That can be understood in logical term, for instance consider a package delivery from France to Finland, the ultimate measure of the package delivery is whether it will be received on time and in good condition. Before you receive  the package, you will be provided a tracking identification (ID) to tract your item. Delivery from any one point in the chain to another may have multiple service providers, with an implicit measurement point.
+This principle, of decomposition into component services, can be applied to most applications, regardless of whether they are internet-enabled.\\
+For instance service blueprints which are diagrams that visualize organizational processes in order to optimize how a business delivers a user experience. The diagram below show the five key high-level steps for an effective service blueprinting \cite{Blueprint}.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/Blueprint.png} 
+\caption{Five steps for service blueprinting \cite{Blueprint}}
+\label{fig:SB} 
+\end{figure}
+Here are the brief definitions of the different steps:\\
+    1. Find support: Build a core crossdisciplinary team and establish stakeholder support.\\ 
+    2. Define the goal: Define the scope and align on the goal of the blueprinting initiative.\\ 
+    3. Gather research: Gather research from customers, employees, and stakeholders using a variety of methods.\\
+    4. Map the blueprint: Use this research to fill in a low-fidelity blueprint.\\ 
+    5. Refine and distribute: Add additional content and refine towards a high-fidelity blueprint that can be distributed amongst clients and stakeholders.\\ \\*
+In our case we will focus on network application, in the diagram below,  "end-to-end" architecture for a web-based application can be decomposed into a set of measurement points for service level indicators \cite{AAMES}.\\
+A user  of the application performing a transaction depends on all the layers below in order to complete a transaction. Here a user  establishes a connection with a web-server over a network.
+The webserver connects with the application server, which processes business logic. The business logic in the application server connects to the DBMS for data retrieval as appropriate. And, of course, the DBMS runs on the operating system; it is only as available as the operating environment on which it executes. "Service" availability can be measured or tracked as only a subset of the complete end-to-end stack. With correct
+design allocating sufficient independence between layers, it's possible to speak of the availability of a series or set of services, each of which is a subset of what the end user requires to be up and running from end to end.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/SERD.png} 
+\caption{Service Decomposition \cite{AAMES}}
+\label{fig:SD} 
+\end{figure}
+
+
+\pagebreak
+\begin{enumerate}
+\item Operating System service on hardware, presuming Hardware availability. Most platform vendors who refer to "99.9\% uptime" refer only to this,
+which mean 526 minutes downtime per year or  10 mns downtime/week
+\item End-to-end Database Service, presuming OS and Hardware availability
+\item Application Service availability, including
+DBMS, OS and Hardware availability
+\item Session availability, including all layers below
+\item Application Server divorced from the database. In this scenario, it's conceivable that the business logic and connectivity to a data store could be measured (and managed) independently of the database component. Note that a combination of (2) and (5) are essentially the same as service (4), in the eyes of the user/client
+\item A complete, end-to end measure, including the client and the network.
+While the notion of a "service" used here
+implies the network, I've included it in this diagram to show that you can establish the measure of availability for the stack as a
+whole with or without the network. For internet-based applications, the notion of separating the network is important, because rarely, if ever, can service providers definitively establish and sustain service-levels across the public network. Moreover, when a user connects across
+the internet, it's important to understand how much of the user experience is colored by the vagaries of the internet, and how much is under the direct control of operational staff
+\end{enumerate}
+Decomposition into services takes the first step towards defining what availability is measured, and to what end.  Comparison of Feedback Techniques such as measurement, monitoring, and management are three distinct feedback techniques, ways of taking data gathered about a system and applying it in changes made to the system. They  a useful tool for choosing what data are useful in tracking availability for a service.
+
+\pagebreak
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/Feedbacks.png} 
+\caption{Feedback mechanisms \cite{AAMES}}
+\label{fig:FB} 
+\end{figure}
+
+In the figure:\\
+-reporting frequency characterizes event sampling — how often, and how immediately are events known?\\ -while intervention frequency characterizes action taken based on this event data — how often do you draw conclusions from the data, and how immediately can you intervene to make changes to the system based on your conclusions?”
+\subsection{Service level metrics (indicators) classification}
+Most datacenters have service level objective (SLO) to characterize system behavior.  SLO can be measured using monitoring system such as prometheus or periodic log analysis. However, the best AAME indicator must track system user work as closely as possible, because not measuring behavior at the system user side, can miss a range of problems that affect users but don’t affect datacenter metrics.
+
+\begin{flushleft}
+\textbf{Service level metric characterization}
+\end{flushleft}
+As mentioned in \ref{APPROACH}, web-based application can be decomposed
+into a set of measurement points for service level indicators.\\
+Subsystems in a networked, distributed application such as DBMS, application server, HTTP, webserver (figure \ref{fig:SD}) can be characterized independently, as components of an end-to-end service level metric, in a way that supports good information about managing to service levels.\\
+SLIMTAX (Service Level Indicator Metric Taxonomy) is an “hierarchy for ranking levels of application availability and service level metrics” \cite{AAMES}. By using SLIMTAX it is possible to identify where feedback techniques (figure \ref{fig:FB}) for availability can be applied, and to distinguish one feedback technique from another.\\
+
+ \begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Pictures/SLIT.png} 
+\caption{Applying the SLIMTAX hierarchy to a service level objective \cite{AAMES}}
+\label{fig:SLI} 
+\end{figure}
+
+SLIMTAX  hierarchy  incrementally  adds features  of  an  application  service  from  the bare  minimum  of  application  existence, up through    network    delivery,    service    level thresholds,  and  complete  user-centric  status measurement.\\ 
+A0: Key Process(es) exists locally. For example, a list of processes shows HTTP is running. Some applications have multiple processes, so just looking  for those that show an application is up may not be enough.\\
+A1: Local State. Key process or processes can work to process inputs locally and produce correct output. For example, this is how a cluster tests  the  availability of the applications it is hosting. At this level, the test is local; in some instances, it is possible to derive availability from such  a  passive measure, such as the scanning of log files.\\
+A2: Remote Session. User can establish access (log  in) over  a network.  Here, the notion of a synthetic transaction is introduced, though it  needonly run at  intervals  shorter  than  target failover  times,  in  order to  expose  any failures.  For  example,  an  application  that fails  over  in  15  minutes  can  show  its availability in an A2 test that runs every 10 minutes,  as  the  15  minute  failover  will register as an outage.\\
+A3: Transaction Response Time. Key business operations are performing ata   given   rate. Here, a service level threshold  or  objective  is  used  to  measure whether a  sufficient fraction of key transactions   completes   quickly   enough; for example, 99.9\% of the monitored transactions complete in 8 seconds or less.\\
+A4: User work. Key population of users or clients are performing given units of user work overtime. Such an indicator would account for 200 active users, sending and receiving an average of 30 emails each per hour, showing that  an email  system  delivers 12,000 messages per hour with a  given population. This measure can be based onsession logs,  or  based  on  instrumented clients with a closed-loop that captures a user-centric   picture of the end-to-end application.\\ \\*
+Additional information is added when moving from one level to another in SLIMTAX hierarchy, for instance from A0 to A1, a metric adds information showing that key processes in the application can accept inputs and do work.
+
+\pagebreak
+\section{CASE STUDY: BACKUP SYSTEM AVAILABILITY}
+Organization’ data and the data stored on networks are growing exponentially, such growth brings about a variety of concerns, including networks performance, and how to back up that data. Backup software should be able to process data across networks, thus the importance of the 
+network availability measurement.
+Network availability measurements provide indispensable information for network operations such as  anomaly detection in data centers and backbone networks. 
+\subsection{Backup servers, data center and network availability measurement} \label{Backup}
+
+\begin{flushleft}
+\textbf{Backup servers}
+\end{flushleft}
+In early client/server networks, administrative control was restricted to individual computers. As the data used on isolated computers grew larger and more important, simple storage devices (floppy disks) were used to back up that data. Nowadays, backup servers and data centers are used to store large
+anount of data.
+It is extremely difficult to find the best backup strategy for an organization, whereas backup software for client/server networks must always have three characteristics: reliability, efficiency and flexibility.  
+If individual files from a backup or the entire backup image cannot be restored when needed, the backup is useless. 
+Two important backup decisions need to be made in any organization:\\ 
+where will the backup images be stored?\\
+How will the backup process be controlled?\\
+Backup is a duplication of a system file or part of a system file (such as data or files) stored on another storage medium that can be used at any time to restore the data or files if needed \cite{6765952}. There are three types of data backups, including:\\ 
+    1. Full Backup: Copy all data including directories to other media.\\
+    2. Incremental Backup: Copy all the changed data since last full backup performed.\\
+    3. Mirror Backup: Just like full backup, but the data is not compacted or compressed (with.tar format,.zip) which can cause storage media to have a large enough capacity.
+
+\begin{flushleft}
+\textbf{Data center}
+\end{flushleft}
+The data center is very important in the organization because it store all the data needed by the organization.  Many techniques and methods are used to perform security in a data center including duplicate servers containing data backup from the data center. The main data center services are as follows \cite{8230012}: \\
+\begin{itemize}
+\item Business Continuance Infrastructure
+\item Data Center Security
+\item Application optimization
+\item IP Infrastructure
+\item Storage Infrastructure
+\end{itemize}
+
+\begin{flushleft}
+\textbf{Network availability measurement}
+\end{flushleft}
+Network performance diagnostics is an important topic, and a challenging task that has been studied since the Internet was invented because the network becomes  more and more complicated over time. 
+When network is undergoing problems such as congestion, scan attack, DDoS attack, etc., measurements are much more important than usual. Moreover, traffic characteristics including available bandwidth, packet rate, and flow size distribution vary drastically, significantly degrading the performance of measurements.
+
+
+\subsection{Data and process redundancy system model} 
+Data security is a very important aspects of an organization. A commonly used technique for securing data centers is to create a duplication system called backup. Backup is a process of file system stored on other storage media. The duplicated data is the replica data of the main data center.
+Each organization needs to set up high operational costs to provide dedicated server machines, stable power source, server cooling, large bandwidth and standalone space for the server to support optimal data backup center.
+\begin{flushleft}
+\textbf{Backup system design overview}
+\end{flushleft}
+As stated in \ref{Backup}, one of the two important backup decisions need
+to be made in any organization is where will the backup images be stored.\\
+Chasing 100\% up time could be very expensive for an organization, because the skills to deal with the complexity and the system’s inability to handle change easily drive up the cost. It good to note that most downtime is an issue of human error, people pushing bad code, rather than faulty architecture. “Some IT operations executives are fond of saying that the best way to improve availability is to lock the datacenter door.”\\
+The purpose of the backup service here is to ensure three of main services of the data center such as business continuity, data center security and also as storage infrastructure for the company.\\ 
+Virtual machines are not used in the redundancy system. Backup is done to local disk and sent to a remote data center (Europe or USA).
+Company has full control of the backup host, mean that the backup host services are not provided by a third party cloud service provider. Backup host are within the company private network, by seizing a LAN bandwidth among nodes, files transfer is less prone to disruption resulting in corrupted files.\\
+Backup replication model:\\
+\begin{itemize}
+     \item Each data centre has two on-site backup servers
+     \item All files are mirrored between data centres
+     \item Off-site backups are stored in a 3rd party cloud servers.
+     \item The synchronisation of backups happen through SSH protocol (r-sync).
+     \item Environment syncs backup files to its assigned backup file within the same DC to its on-site backup server.
+     \item once the backup is fetched, it is mirrored to an equivalent server in a different DC by a pull sync from the secondary backup mirror host.
+     \item all these jobs are executed by cron jobs.
+\end{itemize}
+    
+ Here is an example of configuration in cron job used in replication process:\\ 
+ 
+ 0 8,20 * * *  \enspace */usr/bin/rsync -e "ssh -o Compression=no -o ServerAliveInterval=60 -o ServerAliveCountMax=60" --whole-file -avr server.*.*.com:/opt/*-backups/* /opt/*-backups/
+ \begin{itemize}
+ \item Ansible: Backup mirroring backups
+ \end{itemize}
+0 8,20 * * * \enspace */usr/bin/rsync -e "ssh -o Compression=no -o ServerAliveInterval=60 -o ServerAl\\
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Documents/Thesis/Backupservers/Backups/backup_system.jpeg} 
+\caption{Backup System}
+\label{fig:Backup} 
+\end{figure}
+\pagebreak
+
+The backup target server is in the same data center with the environment to be backed up to ensure high bandwidth and secure connection. Moreover, he backups to two different data center to improved the redundancy.\\
+The figure above describes the backup system. Backup servers are deployed in pairs, backup server 1 is the main backup target for environments in the first data center, which is then replicated to backup server 7 in the second data center.
+
+\section{METHODS AND TOOLS}
+Zabbix and prometheus are used to monitor the components of the backup system.\\
+Zabbix \cite{10.5555/3074244} which  is a mponitoring software tool for diverse IT components,  is used to provide monitoring metrics on CPU load and disk space consumption for instances and backp servers.\\ 
+Prometheus \cite{turnbull2018monitoring} is an application used for event monitoring and alerting.
+Prometheus data is stored in the form of metrics, with each metric having a name that is used for referencing and querying it. Each metric can be drilled down by an arbitrary number of key=value pairs (labels). Labels can include information on the data source (which server the data is coming from) and other application-specific breakdown information such as the HTTP status code (for metrics related to HTTP responses), query method (GET versus POST), endpoint, etc. \\
+Prometheus is used to monitor backup sever used envirement’ metadata that should  be backep up. Backup servers are monitoring directly by exporting information about  them from the last two days. This is done by scanning the directory structure. Backups contain information in their file path about from which server the backup has come from and name of the instance as well as date and time information.\\
+The following informations collected from the different backup replications are use as a metrics to produce prometheus alerting rules:
+\begin{itemize}
+\item backup should exists on multiple servers with two files per r\_instance\_id
+\item timestamps are similar
+\item backup sizes should be equal
+\end{itemize}
+
+
+\section{AVAILABILITY ISSUES RELATED TO THE ACTUAL METHODS AND TOOLS}
+ Backup failures are a severe problem, which is noticed only when the data backup fails. It occurs 
+regularly in all client/server networks. Many organizations have backup failures because of network 
+connection, software bugs. Moreover, organizations spend a large amount of their time with backup product updates and patches.\\
+A research recently  found that “backup of open files is still a severe problem for many users. Files left open by end users or those in use during backups cause most backup failures, and the failures occur surprisingly often in large companies--nearly three times per week on average.”
+\subsection{Availability problems statement}
+Nowadays, most organizations have problems related to backup sytem 
+failure. Our case company experiences problems with its data backup which affect the availability of the backup system:\\
+\begin{flushleft}
+\textbf{Connectivity and disk space}
+\end{flushleft}
+Connectivity issue between calculation nodes and  series of backup servers. This occurs  when data are send from the  from calculation nodes to the backup servers.
+Backup’ files are corrupted because the ssh connection problem between calculation nodes and backup servers. Thus afected backups are transferred manually.
+The connectivity issue is not continious, and does not affect all backup processes in the backup system. Moreover, files transfers from file System to calculation nodes or between calculation nodes are slow.
+Most of the time, transfer recovers automaticaly (from few seconds up to several ninutes), sometimes it ends as ssh tunnel times out. Monitoring tools used by the company (zabbix \cite{10.5555/3074244} and prometheus \cite{turnbull2018monitoring}) do not detect the issue with the backup process. It is detected through rsync which mtime updates only after successful transfer.
+Whereas, it has been detected, that zabbix monitoring occasionally has a gap in data around the same time there was interruption in file transfer. This explaining by the underneath figure \ref{fig:zabbix}.
+Moreover, in zabbix, there has not been detected correlation on resource usage at either side of the connection (CPU, network, disk space, ...).\\
+The issues enumerated above rise the importance of the backup process monitoring.
+
+
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Documents/Thesis/Backupservers/Backups/zabbix2.jpeg} 
+\caption{Data issue in zabbix}
+\label{fig:zabbix} 
+\end{figure}
+\pagebreak
+In the figure above, there is an illustration of missing data in zabbix data for the same hours backups are failing due to connection problems.
+
+\section{SOLUTION DESIGN }
+As stated in \ref{APPROACH}, the principle, of service delivery decomposition into component services, can be applied to most
+applications, regardless of whether they are internet-enabled. 
+Thus the  service delivery over a network in the backup system can be decomposed into a set of measurement points for service level indicators.
+
+\subsection{Methods}
+Application Availability Measurement (AAMe) method wil be used to  identify meaningful indicators of the backup system availability. AAMe measurement approach is  architecture independent \cite{AAMES}. the following approach will be used:
+\begin{itemize}
+\item Overview of the model for backup system availability
+\end{itemize}
+\begin{itemize}
+\item Approach for choosing what to measure
+\end{itemize}
+\begin{itemize}
+\item Monitoring and management techniques
+\end{itemize}
+\begin{itemize}
+\item Classification of the measures
+\end{itemize}
+\pagebreak
+
+\begin{flushleft}
+\textbf{Overview of the model for backup system availability}
+\end{flushleft}
+ Approach of service decomposition allows us to measure the availability of different components of the backup system.\\
+The underneath figure (fig: \ref{fig:Backupavailability}) has been decomposed into a set of measurement points
+for service level indicators. Any backup process will depend on all the layers mentioned above. Here, the client server makes a backup to the backup server which is lacated in the same data center throug a local network connection. The data are then replicated to a backup server lacated in another data center through a network connection.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Documents/Thesis/Backupservers/Backups/service_decomposition.jpeg} 
+\caption{Sercice decomposition}
+\label{fig:Backupavailability} 
+\end{figure}
+\pagebreak
+
+\begin{flushleft}
+\textbf{Approach for choosing what to measure}
+\end{flushleft}
+With correct design allocating sufficient independence
+between layers, it's possible to measure the  availability of set of the following services:
+\begin{itemize}
+\item client server
+\end{itemize}
+\begin{itemize}
+\item Client server local components: cpu, menory, disk space, open files
+\end{itemize}
+\begin{itemize}
+\item Network characteristics: speed, bandwidth
+\end{itemize}
+\begin{itemize}
+\item Backup server
+\end{itemize}
+\begin{itemize}
+\item Backup server local components: cpu, menory, disk space 
+\end{itemize}
+
+\begin{flushleft}
+\textbf{Classification of the measures }
+\end{flushleft}
+\begin{itemize}
+\item[1, 4, 7]: Client and backup servers can have Process(es) existing locally.\\ Thus just showing that they are up may not be enough.
+Here the availability metric will show
+client or backup server availability
+metric because it doesn't test if they are
+doing something, it just checks if they exist.
+Similarly, many systems management tools check application availability just by looking if it is up.
+\end{itemize}
+
+\begin{itemize}
+\item[2, 5]: client or backup server  local state availability.\\
+Local process(es) can work to process inputs locally and produce correct output. Here, we measure the availability of the components 
+hosting by client and backup server. At this level, the availability index measurement is local; it is possible to derive the availability of the whole client server or backup server.
+To determine the failure of the components, such as disk space, menory usage within a client or backup server, and take appropriate action, SLO or SLI of [1, 4, 7] or [2, 5] measure may be adequate;  failures should be sufficiently well-defined to trigger an alert. In other words, measurement at the those level ([1, 4, 7] and [2, 5]) maps to interventions that are feasible at the local host level. 
+\end{itemize}
+
+\begin{itemize}
+\item[3, 6]: Connection session through network.\\
+Client or backup server establishes access over a network. Here, the notion of network measurement is introduced. For instance, a backup process that fails due to network connectivity issue can show its availability  here.
+\end{itemize}
+
+
+\subsection{Desadvantages of the methods}
+ The desadventage of the sytem decomposition into subsystem demarcation is that availability metrics are inherently not comparable across levels. In other words, the  98\% of SLO or SLI availability at client server cannot
+be compared with 99.2\% availability at the backup server neither at the network level. Moreover, availabily index at one level may not cover redundancies that mask failures at the next level up. For instance, the SLI at the client server can not cover redundancies that mask failures at the backup server level.
+\subsection{Tools}
+Backup server monitoring is important for any backup system. Making backups is an important periodic task; if neglected; it can cost quite a number of time and other resources in case an important data is lost for any reason (hardware failure, network connection, disk space). At any given moment it is convenient to know the actual state of a backup server: whether all the required services are running, and what is going on during the backup process, in general and in details.
+Testing processes presence is somewhat more tricky: for optimal backup server performance, backup tasks should be scheduled so that they won’t overlap too much: in case of large-volume backups and/or slow connectivity with backup server simultaneous backups may degrade the overall efficiency of the server and make the whole operation run slower than the same backups running subsequently. To find possible bottlenecks, backup system monitoring should be performed regularly, to find how the backup tasks are actually performed. It’s difficult to monitor these issues manually.
+
+\begin{flushleft}
+\textbf{Description of the acual tools in use}
+\end{flushleft}
+Tools used  by the company for backup system monitoring are:  uptrends \cite{Uptrends}, zabbix and prometheus.
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Documents/Thesis/Backupservers/Backups/backup.jpeg} 
+\caption{Actual backup system availability}
+\label{fig:Actual} 
+\end{figure}
+\pagebreak
+Prometheus and zabbix monitor and  set up dashboards and rudimentary alerts for the the following resources or processes in the actual backup system:\\
+
+\begin{itemize}
+\item CPU time consumed by individual process
+\end{itemize}
+
+\begin{itemize}
+\item Disk space (client sevrer or backup server disk out of space)
+Here, client or backup server total disk sapce  is measured. The different environments size within the servers are not monitoring. The observation and  monitoring of the local components could be very important for the SLO and SLI measurement.  
+\end{itemize}
+
+\begin{itemize}
+\item Garbage Collection
+\end{itemize}
+
+\begin{itemize}
+\item Check if severs or instances are up, for instance if no metrics received for few minutes mean that an instance or server could be available (down)
+\end{itemize}
+
+\begin{itemize}
+\item Backup replication, using informations collected from the different backup replications are use as a metrics to produce prometheus alerting rules. For instance backup should exists on multiple servers with two files per r\_instance\_id, have timestamps are similar and sizes.
+\end{itemize}
+
+\begin{itemize}
+\item Backup file monitoring in Prometheus is not yet implemented. This should monitor that backup file has been created on backup servers within a certain time frame.
+The critical files are daily the full commits backup,  which is available for the last seven days.
+\end{itemize}
+
+\begin{itemize}
+\item Data centers up time monitoring ( uptime and accessibility from the Internet) is not implemented in prometheus neither in zabbix.
+Since there is no access to individual environments from the general Internet. 
+It was suggested that Uptrends could be used to check that the Data Centers are is accessible. Uptrends was already used in the company. Whereas, data centers up time are not monitoring.
+\end{itemize}
+
+\begin{itemize}
+\item Network metric measuremenmt not implemented in the actual system.
+\end{itemize}
+
+
+\begin{flushleft}
+\textbf{Tools, monitoring and management techniques}
+\end{flushleft}
+
+Monitoring tools (zabbix, promethus, uptrends) and the way to meausre the availability of the backup system already in use need to be improved. This should be done by using the method of service decomposition in sybsystem for availability metric.\\ \\
+To implement our solution based on  service decomposition in sybsystem for availability metric. The following methode or tool could be used:
+\begin{itemize}
+\item Create a  real-time Sematic Web applications for network monitoring and troubleshooting. This will measure the network availability, whereas it is beyond of scope.
+\end{itemize}
+
+\begin{itemize}
+\item Monitoring Network and Service Availability with Open-Source Software.
+Implementation of a monitoring system using an open-source software package will improve the
+availability of services and reduce the response time when troubles occur.
+\end{itemize}
+
+\subsection{Open-Source Software}
+A comprehensive look at best practices in managing systems and networks is presented in  \cite{limoncelli2016practice} (The Practice of System and Network Administration).  The book provides a short list of first steps toward improving IT services, one of which is the implementation of some form of monitoring. Without monitoring, systems can be down for extended periods before administrators notice or users report the problem.   There are two primary types of monitoring: real-time
+monitoring, which provides information on the current
+state of services, and historical monitoring, which provides long-term data on uptime, use, and performance. 
+Here  I will describe the implementation of a monitoring system using an open-source software package to improve the availability of services and reduce the response time when troubles occur. Provide a brief overview of the literature available on monitoring IT systems, and then
+describes the implementation of Nagios \cite{nagios}, an open-source network monitoring system, to monitor the backup system.
+While Nagios provides both types of monitoring, we will focus on real-time monitoring and the value of problem identification and notification.
+Service monitoring can consist of a variety of tests. In its simplest form, a ping test will verify that a host (servers) is powered on and successfully connected to the network, the establishment of a connection on a port. For instance, ping tests  can be used to monitor the availability of the routers, servers and access points on the network. \\ \\ 
+A large number of monitoring tools exist, both commercial and open-source.  The selection of a specific software package should depend on the services being monitored and the goals for the monitoring.
+ Nagios open-source product \cite{nagios} has an established history of active development, a large and active user community, a significant number of user-contributed extensions, and multiple books published on its use. Commercial support is available from a company founded by the creator and lead developer as well as other authorized solution providers. Moreover, If a check or action can be scripted using practically any protocol or programming language, Nagios can monitor it. Nagios also provides a variety of information displays.\\ \\
+Detailed installation instructions are available on the Nagios website.
+The Nagios system provides a flexible solution to monitor hosts and services. The object-orientation and use of plug-ins in Nagios allow system administrators to monitor any aspect of IT infrastructure. 
+Additionally, the open-source nature of the package allows independent development of extensions to add features or integrate the software with other tools. Nagios Community site and other sources provide repositories of documentation, plug-ins, extensions, and other tools designed to work with Nagios. But Nagios' user-contributed plug-ins often require the installation of other software, most notably Perl modules. Nagios runs on a variety of Linux. \\ \\
+Nagios configuration relies on an object model, which allows more flexibilities but can be complex. 
+Nagios has two main configuration files, cgi.cfg and nagios.cfg. The former is primarily used by the Web interface to authenticate users and control access, and it defines whether authentication is used and which users can access what functions. The latter is the main configuration file and controls all other program operations. The cfg\_file and cfg\_dir directives allow the configuration to be split into manageable groups using additional recourse files and the object definition files (figure \ref{fig:Nagios}). 
+Nagios uses an object-oriented design. The objects in Nagios are displayed in table \ref{table:1}. 
+
+
+
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{../../../Documents/Thesis/Backupservers/Backups/Nagios.jpeg} 
+\caption{Nagios configuration relationships}
+\label{fig:Nagios} 
+\end{figure}
+\pagebreak
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Hosts & Services or devices being monitored \\
+ \hline
+ Hostgroups & Groups of hosts\\ 
+ \hline
+ Services   & Services being monitored\\
+ \hline
+ servicegroups & Groups of services\\
+ \hline
+ Timeperiods   & Scheduling of checks and notifications\\
+ \hline
+ Commands & Checking hosts and services notifying contacts processing\\			  & performance event handling\\
+ \hline
+ Contacts & Individuals to alert  \\ 
+ \hline
+ Contactgroups & Groups of contacts\\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Nagios objects}
+\label{table:1}
+\end{table}
+
+Once the system is running, more advanced features can be explored. The documentation describes many such enhancements, but the following may be particularly useful depending on the situation.
+
+\begin{itemize}
+\item Nagios provides access control through the combination of settings in the cgi.cfg and htpasswd.users files. However, care should be taken to avoid disclosing sensitive information regarding the network or passwords, or allowing access to CGI (Common Gateway Interface) programs that perform actions.
+\end{itemize}
+
+\begin{itemize}
+\item  Event handlers allow Nagios to initiate certain actions after a state change. If Nagios notices that a particular service is down, it can run a script or program to attempt to correct the problem. Care should be taken when creating these scripts as service restarts may delete or overwrite  critical informations, or worsen the actual situation if an attempt to restart a service or reboot a server fails.
+\end{itemize}
+
+\begin{itemize}
+\item Nagios provides notification escalations, permitting the automatic notification of problems that last longer than a certain time. For instance, a service escalation could send the first three alerts to the admin group. If properly configured, the fourth alert would be sent to the managers group as well as the admin group. In addition to escalating issues to management, this feature can be used for on-call personnel.
+\end{itemize}
+
+\begin{itemize}
+\item Nagios can be configured to provide redundant or failover monitoring. For instance Nagios can be configured to allowing two servers to operate in parallel. whereas, only one server sends notifications unless the main server fails.
+\end{itemize}
+
+\pagebreak
+
+\begin{flushleft}
+\textbf{SUMMARY}
+\end{flushleft}
+
+\pagebreak
+
+
+
+
+
+% Write some science here.
+
+%Sample text and a reference~\cite{example}.
+
+
+% --- References ---
+%
+% bibtex is used to generate the bibliography. The babplain style
+% will generate numeric references (e.g. [1]) appropriate for theoretical
+% computer science. If you need alphanumeric references (e.g [Tur90]), use
+%
+% \bibliographystyle{babalpha-lf}
+%
+% instead.
+
+\bibliographystyle{babplain-lf}
+
+\bibliography{references-en}
+
+
+% --- Appendices ---
+
+% uncomment the following
+
+% \newpage
+% \appendix
+% 
+% \section{Example appendix}
+
+\end{document}
